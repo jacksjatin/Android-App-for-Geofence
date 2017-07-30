@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Dealers Inn</string>
+	<string name="openDrawer">Dealers In</string>
+    <string name="closeDrawer">Dealers In</string>
+	<string name="facebook_app_id">1950966078473276</string>
+    <string name="fb_login_protocol_scheme">fb1950966078473276</string>
+</resources>

@@ -1,0 +1,343 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Plugin.pbXSettings</name>
+    </assembly>
+    <members>
+        <member name="P:Plugin.pbXSettings.Settings.Current">
+            <summary>
+            Default settings set.
+            </summary>
+        </member>
+        <member name="P:Plugin.pbXSettings.Settings.Id">
+            <summary>
+            Settings set identifier. It can be any string as long as can be used as file name.
+            </summary>
+        </member>
+        <member name="F:Plugin.pbXSettings.Settings.Serializer">
+            <summary>
+            Current serializer.
+            Default: <see cref="T:Plugin.pbXSettings.pbXNet.DataContractSerializer"/>
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.Settings.#ctor">
+            <summary>
+            Constructor for default settings set.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.Settings.#ctor(System.String)">
+            <summary>
+            Constructor for user defined settings set. 
+            Parameter <paramref name="id"/> can be any string as long as can be used as file name.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.Settings.LoadAsync">
+            <summary>
+            Loads entire settings set using native settings storage.
+            </summary>
+            <seealso cref="T:Plugin.pbXSettings.SettingsStorage"/>
+            <seealso cref="T:Plugin.pbXSettings.Abstractions.ISettingsStorage"/>
+        </member>
+        <member name="M:Plugin.pbXSettings.Settings.SaveAsync(System.String)">
+            <summary>
+            Saves entire settings set using native settings storage.
+            </summary>
+            <seealso cref="T:Plugin.pbXSettings.SettingsStorage"/>
+            <seealso cref="T:Plugin.pbXSettings.Abstractions.ISettingsStorage"/>
+        </member>
+        <member name="M:Plugin.pbXSettings.Settings.Serialize">
+            <summary>
+            Serializes <see cref="F:Plugin.pbXSettings.pbXNet.Settings.KeysAndValues"/> dictionary to string.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.Settings.Deserialize(System.String)">
+            <summary>
+            Deserializes <see cref="F:Plugin.pbXSettings.pbXNet.Settings.KeysAndValues"/> dictionary from string.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.Settings.IsInternalProperty(System.String)">
+            <summary>
+            Should return true for properties which are not settings and should not be seen when enumerating settings set.
+            </summary>
+        </member>
+        <member name="T:Plugin.pbXSettings.SettingsStorage">
+            <summary>
+            Class giving access to native settings storage.
+            </summary>
+        </member>
+        <member name="P:Plugin.pbXSettings.SettingsStorage.IsSupported">
+            <summary>
+            Indicates whether the current platform supports settings storage.
+            </summary>
+        </member>
+        <member name="P:Plugin.pbXSettings.SettingsStorage.Current">
+            <summary>
+            Current native settings storage.
+            </summary>
+            <seealso cref="T:Plugin.pbXSettings.Abstractions.ISettingsStorage"/>
+        </member>
+        <member name="T:Plugin.pbXSettings.pbXNet.ArrayExtensions">
+            <summary>
+            Arrays extensions.
+            </summary>
+        </member>
+        <member name="T:Plugin.pbXSettings.pbXNet.StringExtensions">
+            <summary>
+            Strings extensions.
+            </summary>
+        </member>
+        <member name="T:Plugin.pbXSettings.pbXNet.ExpressionExtensions">
+            <summary>
+            Linq expression extensions.
+            </summary>
+        </member>
+        <member name="T:Plugin.pbXSettings.pbXNet.Observable">
+            <summary>
+            A base class that allows you to observe changes in properties.
+            </summary>
+            <example>
+            <code>
+            class Window : Observable {
+              ...
+              bool _open;
+              public bool Open {
+                get => _open;
+                set => SetValue(ref _open, value);
+              }
+              ...
+            }
+            
+            class HomeControl {
+              ...
+              bool _armed;
+              List&lt;Window&gt; _windows = new List&lt;Window&gt;();
+              ...
+              public AddWindow(Window window) {
+                _windows.Add(window);
+                window.PropertyChanged += OnWindowPropertyChanged;
+              }
+              public OnWindowPropertyChanged(object sender, PropertyChangedEventArgs a) {
+                if(!_armed)
+                  return;
+                if(a.PropertyName == "Open")
+                  if((sender as Window).Open)
+                    FireAlarm(...);
+              }
+              ...
+            }
+            </code>
+            </example>
+            <seealso cref="T:System.ComponentModel.INotifyPropertyChanged"/>
+        </member>
+        <member name="T:Plugin.pbXSettings.pbXNet.Settings">
+            <summary>
+            <para>
+            	Class that makes it easy to handle all sorts of settings, 
+            	more precisely, values of any type that is accessed through a key.
+            </para>
+            <para>
+            	The class is fully ready for use in binding systems because it inherits after <see cref="T:Plugin.pbXSettings.pbXNet.Observable"/>.
+            </para>
+            <para>
+            	The class can also be used as a regular collection, that is, it can be enumerated :)
+            </para>
+            </summary>
+            <example>
+            <code>
+            public class Main
+            {
+            	public static void Main(string[] args)
+            	{
+            		MySettings s = new MySettings();
+            		s.Load();
+            		
+            		Console.WriteLine($"{s.BoolSetting}, {s.StringSetting}");
+            		Console.WriteLine($"---{s.Get&lt;string&gt;("test")}---");
+            		
+            		s["test"] = "Hello!";
+            		s.BoolSetting = false;
+            		s.StringSetting = "another value";
+            		
+            		// Assuming that the data has been saved, that is you implemented 
+            		// virtual functions LoadAsync and SaveAsync or
+            		// used <see cref="!:SettingsInStorage"/> as base class for MySettings.
+            		//
+            		// The first time you start the program, you should see:
+            		//	
+            		// True, some value
+            		// ------
+            		//
+            		// The next time you run the program, you should see:
+            		//
+            		// False, another value
+            		// ---Hello!---
+            	}
+            }
+            
+            public class MySettings : Settings
+            {
+            	[Default(true)]
+            	public bool BoolSetting
+            	{
+            		get => Get&lt;bool&gt;();
+            		set => Set(value);
+            	}
+            	
+            	[Default("some value")]
+            	public string StringSetting
+            	{
+            		get => Get&lt;string&gt;();
+            		set => Set(value);
+            	}
+            	
+            	...
+            	
+            	public override async Task LoadAsync()
+            	{
+            		// Load your settings the way you like.
+            		
+            		// Or use as a base class one of the predefined classes 
+            		// in pbXNet that support read and write settings.
+            	}
+            	
+            	public override async Task SaveAsync(string changedValueKey = null)
+            	{
+            		// Save your settings as you like.
+            		
+            		// Or use as a base class one of the predefined classes 
+            		// in pbXNet that support read and write settings.
+            	}
+            }
+            </code>
+            </example>
+            <seealso cref="!:SettingsInStorage"/>
+        </member>
+        <member name="F:Plugin.pbXSettings.pbXNet.Settings.KeysAndValues">
+            <summary>
+            Thread-safe container for keys and values.
+            </summary>
+        </member>
+        <member name="T:Plugin.pbXSettings.pbXNet.Settings.DefaultAttribute">
+            <summary>
+            Attribute used to decorate and provide default value for properties in classes that inherit from <see cref="T:Plugin.pbXSettings.pbXNet.Settings"/>.
+            </summary>
+            <example>
+            <code>
+            	[Default(true)]
+            	public bool BoolSetting
+            	{
+            		get => Get&lt;bool&gt;();
+            		set => Set(value);
+            	}
+            </code>
+            </example>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.Set(System.Object,System.String)">
+            <summary>
+            Sets the current value for a <paramref name="key"/>.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.Get(System.String,System.Object)">
+            <summary>
+            Gets the current value (as an object) for a <paramref name="key"/> or if <paramref name="key"/> doesn't exist
+            the default value: specified in <see cref="T:Plugin.pbXSettings.pbXNet.Settings.DefaultAttribute"/> attribute for property or 
+            provided by <see cref="M:Plugin.pbXSettings.pbXNet.Settings.GetDefault(System.String)" /> or 
+            specified in parameter <paramref name="def"/> or
+            null.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.Get``1(System.String,``0)">
+            <summary>
+            Gets the current value (as an object type <typeparamref name="T"/>) for a <paramref name="key"/> or if <paramref name="key"/> doesn't exist
+            the default value: specified in <see cref="T:Plugin.pbXSettings.pbXNet.Settings.DefaultAttribute"/> attribute for property or
+            provided by <see cref="M:Plugin.pbXSettings.pbXNet.Settings.GetDefault(System.String)" /> or 
+            specified in parameter <paramref name="def"/> or 
+            default(T).
+            </summary>
+        </member>
+        <member name="P:Plugin.pbXSettings.pbXNet.Settings.Item(System.String)">
+            <summary>
+            Gets the current value (as an object) for a <paramref name="key"/> or if <paramref name="key"/> doesn't exist
+            the default value: specified in <see cref="T:Plugin.pbXSettings.pbXNet.Settings.DefaultAttribute"/> attribute for property or
+            provided by <see cref="M:Plugin.pbXSettings.pbXNet.Settings.GetDefault(System.String)" /> or 
+            null.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.GetDefault(System.String)">
+            <summary>
+            Gets default value, specified in <see cref="T:Plugin.pbXSettings.pbXNet.Settings.DefaultAttribute"/> attribute, for a property whose name matches the content of a <paramref name="key"/>.
+            <para>The function can be overrided and used to provide more complex default values that can not be passed with the <see cref="T:Plugin.pbXSettings.pbXNet.Settings.DefaultAttribute"/> attribute.</para>
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.Contains(System.String)">
+            <summary>
+            Checks whether there is a value described by <paramref name="key"/>.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.Remove(System.String)">
+            <summary>
+            Removes (or turns to default value for properties) a <paramref name="key"/> and the corresponding value.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.Clear">
+            <summary>
+            Removes all keys and corresponding values from settings set.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.LoadAsync">
+            <summary>
+            By default it does nothing.
+            When overridden should load entire collection of keys and values into <see cref="F:Plugin.pbXSettings.pbXNet.Settings.KeysAndValues"/>.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.SaveAsync(System.String)">
+            <summary>
+            By default it does nothing.
+            When overridden should save <paramref name="changedValueKey"/> key and corresponding value 
+            or save entire collection when <paramref name="changedValueKey"/> is set to null.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.Load">
+            <summary>
+            Synchronous shortcut for <see cref="M:Plugin.pbXSettings.pbXNet.Settings.LoadAsync"/>.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.Save(System.String)">
+            <summary>
+            Synchronous shortcut for <see cref="M:Plugin.pbXSettings.pbXNet.Settings.SaveAsync(System.String)"/>.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.GetEnumerator">
+            <summary>
+            Returns an enumerator <see cref="T:System.Collections.IDictionaryEnumerator"/> that iterates through the entire settings set.
+            </summary>
+            <remarks>
+            The enumerator is safe to use concurrently with reads and writes to the settings collection, 
+            however it does not represent a moment-in-time snapshot.
+            The contents exposed through the enumerator may contain modifications made 
+            to the settings collection after GetEnumerator was called.
+            </remarks>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator <see cref="T:System.Collections.IDictionaryEnumerator"/> that iterates through the entire settings set.
+            </summary>
+            <remarks>
+            The enumerator is safe to use concurrently with reads and writes to the settings collection, 
+            however it does not represent a moment-in-time snapshot.
+            The contents exposed through the enumerator may contain modifications made 
+            to the settings collection after GetEnumerator was called.
+            </remarks>
+        </member>
+        <member name="M:Plugin.pbXSettings.pbXNet.Settings.IsInternalProperty(System.String)">
+            <summary>
+            Should return true for properties which are not settings and should not be seen when enumerating settings set.
+            </summary>
+        </member>
+        <member name="T:Plugin.pbXSettings.pbXNet.DataContractSerializer">
+            <summary>
+            
+            </summary>
+        </member>
+    </members>
+</doc>

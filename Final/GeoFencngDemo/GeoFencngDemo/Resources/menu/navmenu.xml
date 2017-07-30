@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <group android:checkableBehavior="single">
+    <item
+      android:id="@+id/nav_home"
+      android:icon="@drawable/ic_home_black_24dp"
+      android:title="Search Dealers" />
+    <item
+      android:id="@+id/nav_messages"
+      android:icon="@drawable/ic_question_answer_black_24dp"
+      android:title="Compare Price" />
+    <item
+      android:id="@+id/nav_friends"
+      android:icon="@drawable/ic_supervisor_account_black_24dp"
+      android:title="Services and Appointment" />
+    <item
+      android:id="@+id/nav_SearchApartment"
+      android:icon="@drawable/ic_devices_black_24dp"
+      android:title="Contact Us" />
+		<item
+      android:id="@+id/nav_Feedback"
+      android:icon="@drawable/ic_devices_black_24dp"
+      android:title="Feedbacks" />
+  </group> 
+  <item android:title="Settings">
+    <menu>
+      <item
+        android:title="Notifications" />
+      <item
+        android:title="Update Profile" />
+     </menu>
+  </item>s
+</menu>

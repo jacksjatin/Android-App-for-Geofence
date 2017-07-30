@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Plugin.pbXSettings.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="T:Plugin.pbXSettings.Abstractions.ISettingsStorage">
+            <summary>
+            An interface that defines methods for accessing a native settings storage.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.Abstractions.ISettingsStorage.GetStringAsync(System.String)">
+            <summary>
+            Should retrieve a string described by identifier <paramref name="id"/> from native settings storage.
+            </summary>
+        </member>
+        <member name="M:Plugin.pbXSettings.Abstractions.ISettingsStorage.SetStringAsync(System.String,System.String)">
+            <summary>
+            Should store string <paramref name="d"/> in native settings storage giving it identifier <paramref name="id"/>.
+            </summary>
+        </member>
+    </members>
+</doc>
